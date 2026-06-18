@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { CATEGORIES, Category, LayetteItem } from "@/lib/types";
+import { CATEGORIES, Category, LayetteItem, SIZES, Size, SizeBreakdown } from "@/lib/types";
 import Modal from "./Modal";
 
 export default function AddItemForm({
@@ -14,9 +14,17 @@ export default function AddItemForm({
   const [category, setCategory] = useState<Category>("Roupas");
   const [name, setName] = useState("");
   const [detail, setDetail] = useState("");
-  const [unit, setUnit] = useState("unidade");
+  const [hasSizes, setHasSizes] = useState(true);
+  const [unit, setUnit] = useState("peça");
   const [qtyNeeded, setQtyNeeded] = useState(1);
+  const [sizes, setSizes] = useState<SizeBreakdown>({ RN: 0, P: 0, M: 0, G: 0 });
   const [estimatedPrice, setEstimatedPrice] = useState(0);
+
+  const onCategoryChange = (c: Category) => {
+    setCategory(c);
+    setHasSizes(c === "Roupas");
+    setUnit(c === "Roupas" ? "peça" : "unidade");
+  };
 
   const submit = () => {
     if (!name.trim()) return;
@@ -25,9 +33,9 @@ export default function AddItemForm({
       name: name.trim(),
       detail: detail.trim() || undefined,
       unit,
-      qtyNeeded,
       estimatedPrice,
       order: Date.now(),
+      ...(hasSizes ? { sizes } : { qtyNeeded }),
     });
     onClose();
   };
@@ -38,7 +46,7 @@ export default function AddItemForm({
         <Field label="Categoria">
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as Category)}
+            onChange={(e) => onCategoryChange(e.target.value as Category)}
             className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           >
             {CATEGORIES.map((c) => (
@@ -64,16 +72,51 @@ export default function AddItemForm({
             className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           />
         </Field>
+
+        <label className="flex items-center gap-2 text-xs font-medium text-brown-600">
+          <input
+            type="checkbox"
+            checked={hasSizes}
+            onChange={(e) => setHasSizes(e.target.checked)}
+            className="accent-moss-600"
+          />
+          Esse item varia por tamanho do bebê (RN/P/M/G)
+        </label>
+
+        {hasSizes ? (
+          <div className="flex flex-wrap gap-2">
+            {SIZES.map((s: Size) => (
+              <label
+                key={s}
+                className="flex items-center gap-1 rounded-full bg-cream-100 px-2.5 py-1 text-xs text-brown-700"
+              >
+                {s}
+                <input
+                  type="number"
+                  min={0}
+                  value={sizes[s] ?? 0}
+                  onChange={(e) =>
+                    setSizes((prev) => ({ ...prev, [s]: Number(e.target.value) }))
+                  }
+                  className="w-12 rounded border border-cream-200 bg-white px-1 py-0.5 text-center"
+                />
+              </label>
+            ))}
+          </div>
+        ) : null}
+
         <div className="grid grid-cols-3 gap-2">
-          <Field label="Qtd">
-            <input
-              type="number"
-              min={1}
-              value={qtyNeeded}
-              onChange={(e) => setQtyNeeded(Number(e.target.value))}
-              className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
-            />
-          </Field>
+          {!hasSizes && (
+            <Field label="Qtd">
+              <input
+                type="number"
+                min={1}
+                value={qtyNeeded}
+                onChange={(e) => setQtyNeeded(Number(e.target.value))}
+                className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
+              />
+            </Field>
+          )}
           <Field label="Unidade">
             <input
               value={unit}
