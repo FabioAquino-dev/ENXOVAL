@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { LayetteItem, Role, SIZES, estimatedTotal, totalQty } from "@/lib/types";
+import {
+  LayetteItem,
+  Role,
+  SIZES,
+  Size,
+  displayTotal,
+  estimatedTotal,
+  isSizePurchased,
+  totalQty,
+} from "@/lib/types";
 import { formatBRL } from "@/lib/format";
 import GiftConfirmModal from "./GiftConfirmModal";
+import MoneyInput from "./MoneyInput";
 
 const PURCHASED_LABEL: Record<string, string> = {
   papai: "Comprado pelo Papai",
@@ -15,6 +25,7 @@ export default function ItemRow({
   role,
   guestName,
   onToggle,
+  onToggleSize,
   onUpdate,
   onDelete,
   onMarkGifted,
@@ -25,6 +36,7 @@ export default function ItemRow({
   role: Role;
   guestName?: string;
   onToggle: (purchased: boolean) => void;
+  onToggleSize: (size: Size, purchased: boolean) => void;
   onUpdate: (partial: Partial<LayetteItem>) => void;
   onDelete: () => void;
   onMarkGifted: (guestName?: string) => Promise<void> | void;
@@ -173,25 +185,42 @@ export default function ItemRow({
 
           {item.sizes ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {SIZES.map((s) => (
-                <label
-                  key={s}
-                  className="flex items-center gap-1 rounded-full bg-cream-100 px-2 py-0.5 text-[11px] text-brown-700"
-                >
-                  {s}
-                  <input
-                    type="number"
-                    min={0}
-                    value={item.sizes?.[s] ?? 0}
-                    onChange={(e) =>
-                      onUpdate({
-                        sizes: { ...item.sizes, [s]: Number(e.target.value) },
-                      })
-                    }
-                    className="w-9 rounded border border-cream-200 bg-white px-1 text-center"
-                  />
-                </label>
-              ))}
+              {SIZES.map((s) => {
+                const needed = item.sizes?.[s] ?? 0;
+                const bought = isSizePurchased(item, s);
+                return (
+                  <label
+                    key={s}
+                    className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] ${
+                      needed > 0 && bought
+                        ? "bg-moss-100 text-moss-800"
+                        : "bg-cream-100 text-brown-700"
+                    }`}
+                  >
+                    {s}
+                    <input
+                      type="number"
+                      min={0}
+                      value={needed}
+                      onChange={(e) =>
+                        onUpdate({
+                          sizes: { ...item.sizes, [s]: Number(e.target.value) },
+                        })
+                      }
+                      className="w-9 rounded border border-cream-200 bg-white px-1 text-center"
+                    />
+                    {needed > 0 && (
+                      <input
+                        type="checkbox"
+                        checked={bought}
+                        onChange={(e) => onToggleSize(s, e.target.checked)}
+                        className="accent-moss-600"
+                        aria-label={`Marcar tamanho ${s} de ${item.name} como comprado`}
+                      />
+                    )}
+                  </label>
+                );
+              })}
             </div>
           ) : (
             <div className="mt-2 flex items-center gap-1.5 text-[11px] text-brown-600">
@@ -223,7 +252,10 @@ export default function ItemRow({
 
           <div className="mt-1 flex items-center justify-between text-[11px] text-brown-500">
             <span>
-              {qty}× · subtotal {formatBRL(estimatedTotal(item))}
+              {qty}× · subtotal {formatBRL(displayTotal(item))}
+              {item.realPrice != null && (
+                <span className="text-brown-400"> (preço real)</span>
+              )}
             </span>
             {item.purchased && (
               <span className="font-medium text-moss-700">
@@ -275,13 +307,10 @@ function PriceField({
       </span>
       <div className="flex items-center rounded border border-cream-200 bg-white px-1.5">
         <span className="text-xs text-brown-500">R$</span>
-        <input
-          type="number"
-          min={0}
-          step="0.01"
-          value={value ?? ""}
+        <MoneyInput
+          value={value}
           placeholder={placeholder}
-          onChange={(e) => onChange(Number(e.target.value))}
+          onCommit={onChange}
           className="w-full min-w-0 px-1 py-1 text-sm outline-none"
         />
       </div>

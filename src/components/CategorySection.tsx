@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Category, LayetteItem, Role, estimatedTotal, totalQty } from "@/lib/types";
+import { Category, LayetteItem, Role, Size, displayTotal, purchasedQty, totalQty } from "@/lib/types";
 import { formatBRL } from "@/lib/format";
 import ItemRow from "./ItemRow";
 
@@ -12,6 +12,7 @@ export default function CategorySection({
   role,
   guestName,
   onToggle,
+  onToggleSize,
   onUpdate,
   onDelete,
   onMarkGifted,
@@ -24,6 +25,7 @@ export default function CategorySection({
   role: Role;
   guestName?: string;
   onToggle: (id: string, purchased: boolean) => void;
+  onToggleSize: (id: string, size: Size, purchased: boolean) => void;
   onUpdate: (id: string, partial: Partial<LayetteItem>) => void;
   onDelete: (id: string) => void;
   onMarkGifted: (id: string, guestName?: string) => Promise<void> | void;
@@ -35,10 +37,8 @@ export default function CategorySection({
   if (items.length === 0) return null;
 
   const totalItems = items.reduce((sum, it) => sum + totalQty(it), 0);
-  const obtainedItems = items
-    .filter((it) => it.purchased || it.gifted)
-    .reduce((sum, it) => sum + totalQty(it), 0);
-  const subtotal = items.reduce((sum, it) => sum + estimatedTotal(it), 0);
+  const obtainedItems = items.reduce((sum, it) => sum + purchasedQty(it), 0);
+  const subtotal = items.reduce((sum, it) => sum + displayTotal(it), 0);
   const done = totalItems > 0 && obtainedItems === totalItems;
 
   return (
@@ -68,6 +68,7 @@ export default function CategorySection({
               role={role}
               guestName={guestName}
               onToggle={(p) => onToggle(item.id, p)}
+              onToggleSize={(s, p) => onToggleSize(item.id, s, p)}
               onUpdate={(partial) => onUpdate(item.id, partial)}
               onDelete={() => onDelete(item.id)}
               onMarkGifted={(name) => onMarkGifted(item.id, name)}

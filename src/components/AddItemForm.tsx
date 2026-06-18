@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { CATEGORIES, Category, LayetteItem, SIZES, Size, SizeBreakdown } from "@/lib/types";
 import Modal from "./Modal";
+import MoneyInput from "./MoneyInput";
 
 export default function AddItemForm({
   onClose,
   onAdd,
 }: {
   onClose: () => void;
-  onAdd: (item: Omit<LayetteItem, "id" | "purchased" | "custom">) => void;
+  onAdd: (item: Omit<LayetteItem, "id" | "purchased" | "custom">) => Promise<void> | void;
 }) {
   const [category, setCategory] = useState<Category>("Roupas");
   const [name, setName] = useState("");
@@ -19,6 +20,8 @@ export default function AddItemForm({
   const [qtyNeeded, setQtyNeeded] = useState(1);
   const [sizes, setSizes] = useState<SizeBreakdown>({ RN: 0, P: 0, M: 0, G: 0 });
   const [estimatedPrice, setEstimatedPrice] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const onCategoryChange = (c: Category) => {
     setCategory(c);
@@ -26,18 +29,28 @@ export default function AddItemForm({
     setUnit(c === "Roupas" ? "peça" : "unidade");
   };
 
-  const submit = () => {
-    if (!name.trim()) return;
-    onAdd({
-      category,
-      name: name.trim(),
-      detail: detail.trim() || undefined,
-      unit,
-      estimatedPrice,
-      order: Date.now(),
-      ...(hasSizes ? { sizes } : { qtyNeeded }),
-    });
-    onClose();
+  const submit = async () => {
+    if (!name.trim() || submitting) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      await onAdd({
+        category,
+        name: name.trim(),
+        unit,
+        estimatedPrice,
+        order: Date.now(),
+        // Firestore rejects `undefined` field values, so the optional
+        // detail is only included when there's actually text to save.
+        ...(detail.trim() ? { detail: detail.trim() } : {}),
+        ...(hasSizes ? { sizes } : { qtyNeeded }),
+      });
+      onClose();
+    } catch {
+      setError("Não foi possível salvar agora. Confira a internet e tente de novo.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -125,21 +138,24 @@ export default function AddItemForm({
             />
           </Field>
           <Field label="Preço est.">
-            <input
-              type="number"
-              min={0}
-              step="0.01"
+            <MoneyInput
               value={estimatedPrice}
-              onChange={(e) => setEstimatedPrice(Number(e.target.value))}
+              onCommit={setEstimatedPrice}
               className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
             />
           </Field>
         </div>
+        {error && (
+          <p className="text-sm font-medium text-red-600" role="alert">
+            {error}
+          </p>
+        )}
         <button
           onClick={submit}
-          className="mt-2 rounded-xl bg-moss-600 px-4 py-3 font-semibold text-white active:scale-[0.98]"
+          disabled={submitting}
+          className="mt-2 rounded-xl bg-moss-600 px-4 py-3 font-semibold text-white active:scale-[0.98] disabled:opacity-60"
         >
-          Adicionar
+          {submitting ? "Salvando..." : "Adicionar"}
         </button>
       </div>
     </Modal>

@@ -58,6 +58,8 @@ export interface LayetteItem {
   qtyNeeded?: number;
   /** Quantity needed broken down by size, for clothing */
   sizes?: SizeBreakdown;
+  /** Which sizes (with qty > 0 in `sizes`) have already been bought — lets you buy RN now and P/M/G later. */
+  sizesPurchased?: Partial<Record<Size, boolean>>;
   estimatedPrice: number;
   realPrice?: number | null;
   purchased: boolean;
@@ -91,6 +93,30 @@ export function totalQty(item: LayetteItem): number {
 
 export function estimatedTotal(item: LayetteItem): number {
   return totalQty(item) * item.estimatedPrice;
+}
+
+export function isSizePurchased(item: LayetteItem, size: Size): boolean {
+  return Boolean(item.sizesPurchased?.[size]);
+}
+
+/** Quantity actually obtained so far — partial for sized items where only some sizes are bought. */
+export function purchasedQty(item: LayetteItem): number {
+  if (item.gifted) return totalQty(item);
+  if (!item.sizes) return item.purchased ? totalQty(item) : 0;
+  return SIZES.reduce((sum, s) => {
+    const needed = item.sizes?.[s] ?? 0;
+    if (needed <= 0) return sum;
+    return sum + (isSizePurchased(item, s) ? needed : 0);
+  }, 0);
+}
+
+/**
+ * What the subtotal should show right now: the real price once you've
+ * typed one in, even before the item is checked as purchased — otherwise
+ * filling "Preço real" early has no visible effect until you mark it bought.
+ */
+export function displayTotal(item: LayetteItem): number {
+  return totalQty(item) * (item.realPrice ?? item.estimatedPrice);
 }
 
 export function realTotal(item: LayetteItem): number {

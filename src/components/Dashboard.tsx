@@ -1,6 +1,6 @@
 "use client";
 
-import { LayetteItem, Role, estimatedTotal, realTotal, totalQty } from "@/lib/types";
+import { LayetteItem, Role, estimatedTotal, purchasedQty, realTotal, totalQty } from "@/lib/types";
 import { formatBRL } from "@/lib/format";
 
 export default function Dashboard({
@@ -29,9 +29,7 @@ export default function Dashboard({
   }
 
   const totalItems = items.reduce((sum, it) => sum + totalQty(it), 0);
-  const obtainedItems = items
-    .filter((it) => it.purchased || it.gifted)
-    .reduce((sum, it) => sum + totalQty(it), 0);
+  const obtainedItems = items.reduce((sum, it) => sum + purchasedQty(it), 0);
   const pct = totalItems ? Math.round((obtainedItems / totalItems) * 100) : 0;
 
   const estimated = items.reduce((sum, it) => sum + estimatedTotal(it), 0);

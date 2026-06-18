@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 import { db, ensureAuth, isFirebaseConfigured } from "./firebase";
 import { FAMILY_ID } from "./access";
-import { AppSettings, LayetteItem, Person, Role } from "./types";
+import { AppSettings, LayetteItem, Person, Role, SIZES, Size } from "./types";
 import { buildDefaultItems, getDefaultQuantities } from "./defaultItems";
 
 const FAMILY_ITEMS_PATH = `families/${FAMILY_ID}/items`;
@@ -182,6 +182,42 @@ export function useEnxoval(role: Role | null) {
     [updateItem],
   );
 
+  /** Marks a single size (RN/P/M/G) as bought or not — the item only becomes fully "purchased" once every needed size is. */
+  const toggleSizePurchased = useCallback(
+    async (id: string, size: Size, purchased: boolean, person: Person | null) => {
+      const current = items.find((it) => it.id === id);
+      if (!current?.sizes) return;
+      const sizesPurchased = { ...current.sizesPurchased, [size]: purchased };
+      const allDone = SIZES.every((s) => !(current.sizes?.[s] ?? 0) || sizesPurchased[s]);
+      await updateItem(id, {
+        sizesPurchased,
+        purchased: allDone,
+        purchasedBy: allDone ? person : null,
+        purchasedAt: allDone ? Date.now() : null,
+      });
+    },
+    [items, updateItem],
+  );
+
+  /** Bulk version of the above for the item's top-level checkbox — marks every needed size at once. */
+  const setAllSizesPurchased = useCallback(
+    async (id: string, purchased: boolean, person: Person | null) => {
+      const current = items.find((it) => it.id === id);
+      if (!current?.sizes) return;
+      const sizesPurchased: Partial<Record<Size, boolean>> = {};
+      for (const s of SIZES) {
+        if ((current.sizes[s] ?? 0) > 0) sizesPurchased[s] = purchased;
+      }
+      await updateItem(id, {
+        sizesPurchased,
+        purchased,
+        purchasedBy: purchased ? person : null,
+        purchasedAt: purchased ? Date.now() : null,
+      });
+    },
+    [items, updateItem],
+  );
+
   /** The only mutation guests are allowed to perform. */
   const markGifted = useCallback(
     async (id: string, giftedByName?: string) => {
@@ -301,6 +337,8 @@ export function useEnxoval(role: Role | null) {
     synced,
     updateItem,
     togglePurchased,
+    toggleSizePurchased,
+    setAllSizesPurchased,
     markGifted,
     undoGift,
     addCustomItem,

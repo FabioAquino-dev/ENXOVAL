@@ -20,6 +20,8 @@ export default function Home() {
     loading,
     synced,
     togglePurchased,
+    toggleSizePurchased,
+    setAllSizesPurchased,
     updateItem,
     addCustomItem,
     removeItem,
@@ -103,8 +105,17 @@ export default function Home() {
               items={filtered.filter((it) => it.category === cat)}
               role={role}
               guestName={guestName}
-              onToggle={(id, purchased) =>
-                togglePurchased(id, purchased, role === "convidado" ? null : role)
+              onToggle={(id, purchased) => {
+                const person = role === "convidado" ? null : role;
+                const item = items.find((it) => it.id === id);
+                if (item?.sizes) {
+                  setAllSizesPurchased(id, purchased, person);
+                } else {
+                  togglePurchased(id, purchased, person);
+                }
+              }}
+              onToggleSize={(id, size, purchased) =>
+                toggleSizePurchased(id, size, purchased, role === "convidado" ? null : role)
               }
               onUpdate={updateItem}
               onDelete={removeItem}
