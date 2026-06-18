@@ -39,7 +39,7 @@ export default function AddItemForm({
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as Category)}
-            className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+            className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -53,7 +53,7 @@ export default function AddItemForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ex: Almofada de amamentação"
-            className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+            className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           />
         </Field>
         <Field label="Detalhe (opcional)">
@@ -61,7 +61,7 @@ export default function AddItemForm({
             value={detail}
             onChange={(e) => setDetail(e.target.value)}
             placeholder="Ex: cor, marca, especificação"
-            className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+            className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           />
         </Field>
         <div className="grid grid-cols-3 gap-2">
@@ -71,14 +71,14 @@ export default function AddItemForm({
               min={1}
               value={qtyNeeded}
               onChange={(e) => setQtyNeeded(Number(e.target.value))}
-              className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+              className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
             />
           </Field>
           <Field label="Unidade">
             <input
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+              className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
             />
           </Field>
           <Field label="Preço est.">
@@ -88,13 +88,13 @@ export default function AddItemForm({
               step="0.01"
               value={estimatedPrice}
               onChange={(e) => setEstimatedPrice(Number(e.target.value))}
-              className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+              className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
             />
           </Field>
         </div>
         <button
           onClick={submit}
-          className="mt-2 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white active:scale-[0.98]"
+          className="mt-2 rounded-xl bg-moss-600 px-4 py-3 font-semibold text-white active:scale-[0.98]"
         >
           Adicionar
         </button>
@@ -106,7 +106,7 @@ export default function AddItemForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-blue-800/90">
+      <span className="mb-1 block text-xs font-medium text-brown-600">
         {label}
       </span>
       {children}

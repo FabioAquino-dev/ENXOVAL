@@ -46,9 +46,9 @@ export default function Dashboard({
   return (
     <div className="grid grid-cols-2 gap-3 px-4 py-3">
       <Card label="Progresso" value={`${pct}%`} sub={`${obtainedItems} de ${totalItems} itens`}>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-blue-100">
+        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-cream-200">
           <div
-            className="h-full rounded-full bg-blue-600 transition-all"
+            className="h-full rounded-full bg-moss-600 transition-all"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -80,10 +80,10 @@ function Card({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-blue-100 bg-white p-3 shadow-sm">
-      <div className="text-xs font-medium text-blue-800/90">{label}</div>
-      <div className={`text-xl font-bold text-blue-950 ${accent ?? ""}`}>{value}</div>
-      {sub && <div className="text-[11px] text-blue-700/80">{sub}</div>}
+    <div className="rounded-xl border border-cream-200 bg-cream-50 p-3 shadow-sm">
+      <div className="text-xs font-medium text-brown-600">{label}</div>
+      <div className={`text-xl font-bold text-moss-950 ${accent ?? ""}`}>{value}</div>
+      {sub && <div className="text-[11px] text-brown-500">{sub}</div>}
       {children}
     </div>
   );

@@ -40,7 +40,7 @@ export default function SettingsPanel({
             value={babyName}
             onChange={(e) => setBabyName(e.target.value)}
             placeholder="Ainda sem nome?"
-            className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+            className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           />
         </Field>
         <Field label="Data prevista do parto">
@@ -48,7 +48,7 @@ export default function SettingsPanel({
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+            className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           />
         </Field>
         <Field label="Meta de orçamento (opcional)">
@@ -57,18 +57,18 @@ export default function SettingsPanel({
             min={0}
             value={budgetGoal}
             onChange={(e) => setBudgetGoal(Number(e.target.value))}
-            className="w-full rounded border border-blue-200 px-2 py-2 text-sm"
+            className="w-full rounded border border-cream-200 px-2 py-2 text-sm"
           />
         </Field>
         <button
           onClick={save}
-          className="mt-2 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white active:scale-[0.98]"
+          className="mt-2 rounded-xl bg-moss-600 px-4 py-3 font-semibold text-white active:scale-[0.98]"
         >
           Salvar
         </button>
         <button
           onClick={onChangeRole}
-          className="rounded-xl border border-blue-200 px-4 py-2 text-sm text-blue-700"
+          className="rounded-xl border border-cream-200 px-4 py-2 text-sm text-moss-700"
         >
           Trocar identidade ({ROLE_LABEL[role]})
         </button>
@@ -80,7 +80,7 @@ export default function SettingsPanel({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-blue-800/90">
+      <span className="mb-1 block text-xs font-medium text-brown-600">
         {label}
       </span>
       {children}

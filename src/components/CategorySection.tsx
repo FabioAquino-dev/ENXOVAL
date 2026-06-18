@@ -45,14 +45,14 @@ export default function CategorySection({
     <section className="px-4 py-2">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-lg bg-blue-100/60 px-3 py-2 text-left"
+        className="flex w-full items-center justify-between rounded-lg bg-cream-100 px-3 py-2 text-left"
       >
-        <span className="flex items-center gap-2 text-sm font-bold text-blue-950">
+        <span className="flex items-center gap-2 text-sm font-bold text-moss-950">
           <span>{icon}</span>
           {category}
           {done && <span className="text-emerald-600">✓</span>}
         </span>
-        <span className="flex items-center gap-2 text-xs text-blue-800/90">
+        <span className="flex items-center gap-2 text-xs text-brown-600">
           {obtainedItems}/{totalItems}
           {role !== "convidado" && <> · {formatBRL(subtotal)}</>}
           <span className={`transition-transform ${open ? "rotate-180" : ""}`}>▾</span>

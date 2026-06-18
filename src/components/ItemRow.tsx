@@ -44,13 +44,13 @@ export default function ItemRow({
             item.gifted
               ? "border-emerald-200 bg-emerald-50/70"
               : item.purchased
-                ? "border-blue-100 bg-blue-50/40"
-                : "border-blue-100 bg-white"
+                ? "border-emerald-200 bg-emerald-50/60"
+                : "border-cream-200 bg-white"
           }`}
         >
-          <p className="text-sm font-semibold text-blue-950">{item.name}</p>
-          {item.detail && <p className="text-xs text-blue-700/80">{item.detail}</p>}
-          <p className="mt-1 text-[11px] text-blue-700/80">
+          <p className="text-sm font-semibold text-moss-950">{item.name}</p>
+          {item.detail && <p className="text-xs text-brown-600">{item.detail}</p>}
+          <p className="mt-1 text-[11px] text-brown-500">
             {qty}× {item.unit} · ≈ {formatBRL(estimatedTotal(item))}
           </p>
 
@@ -62,7 +62,7 @@ export default function ItemRow({
               </span>
             </div>
           ) : item.purchased ? (
-            <div className="mt-2 text-sm font-medium text-blue-700">
+            <div className="mt-2 text-sm font-medium text-emerald-700">
               ✓ Já garantido pela família
             </div>
           ) : (
@@ -98,7 +98,7 @@ export default function ItemRow({
       <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-sm font-semibold text-blue-950">{item.name}</p>
+            <p className="text-sm font-semibold text-moss-950">{item.name}</p>
             <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-emerald-700">
               <span>🎁</span>
               <span>
@@ -108,7 +108,7 @@ export default function ItemRow({
           </div>
           <button
             onClick={onUndoGift}
-            className="shrink-0 rounded-full bg-white px-2.5 py-1 text-xs text-blue-600 shadow-sm"
+            className="shrink-0 rounded-full bg-white px-2.5 py-1 text-xs text-moss-600 shadow-sm"
           >
             Desfazer
           </button>
@@ -122,7 +122,7 @@ export default function ItemRow({
       className={`rounded-xl border p-3 transition ${
         item.purchased
           ? "border-emerald-200 bg-emerald-50/60"
-          : "border-blue-100 bg-white"
+          : "border-cream-200 bg-white"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -130,14 +130,14 @@ export default function ItemRow({
           type="checkbox"
           checked={item.purchased}
           onChange={(e) => onToggle(e.target.checked)}
-          className="mt-1 h-5 w-5 shrink-0 accent-blue-600"
+          className="mt-1 h-5 w-5 shrink-0 accent-moss-600"
           aria-label={`Marcar ${item.name} como comprado`}
         />
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <p
               className={`text-sm font-semibold ${
-                item.purchased ? "text-emerald-800 line-through" : "text-blue-950"
+                item.purchased ? "text-emerald-800 line-through" : "text-moss-950"
               }`}
             >
               {item.name}
@@ -152,7 +152,7 @@ export default function ItemRow({
                 </button>
                 <button
                   onClick={() => setConfirmDelete(false)}
-                  className="rounded bg-blue-50 px-2 py-0.5 text-[11px] text-blue-600"
+                  className="rounded bg-cream-100 px-2 py-0.5 text-[11px] text-moss-600"
                 >
                   Cancelar
                 </button>
@@ -160,7 +160,7 @@ export default function ItemRow({
             ) : (
               <button
                 onClick={() => setConfirmDelete(true)}
-                className="shrink-0 text-xs text-blue-400 hover:text-red-500"
+                className="shrink-0 text-xs text-brown-400 hover:text-red-500"
                 aria-label="Remover item"
               >
                 ✕
@@ -168,7 +168,7 @@ export default function ItemRow({
             )}
           </div>
           {item.detail && (
-            <p className="text-xs text-blue-700/80">{item.detail}</p>
+            <p className="text-xs text-brown-600">{item.detail}</p>
           )}
 
           {item.sizes ? (
@@ -176,7 +176,7 @@ export default function ItemRow({
               {SIZES.map((s) => (
                 <label
                   key={s}
-                  className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] text-blue-700"
+                  className="flex items-center gap-1 rounded-full bg-cream-100 px-2 py-0.5 text-[11px] text-brown-700"
                 >
                   {s}
                   <input
@@ -188,20 +188,20 @@ export default function ItemRow({
                         sizes: { ...item.sizes, [s]: Number(e.target.value) },
                       })
                     }
-                    className="w-9 rounded border border-blue-200 bg-white px-1 text-center"
+                    className="w-9 rounded border border-cream-200 bg-white px-1 text-center"
                   />
                 </label>
               ))}
             </div>
           ) : (
-            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-blue-700">
+            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-brown-600">
               <span>Qtd:</span>
               <input
                 type="number"
                 min={0}
                 value={item.qtyNeeded ?? 1}
                 onChange={(e) => onUpdate({ qtyNeeded: Number(e.target.value) })}
-                className="w-12 rounded border border-blue-200 bg-blue-50 px-1 text-center"
+                className="w-12 rounded border border-cream-200 bg-cream-50 px-1 text-center"
               />
               <span>{item.unit}</span>
             </div>
@@ -221,7 +221,7 @@ export default function ItemRow({
             />
           </div>
 
-          <div className="mt-1 flex items-center justify-between text-[11px] text-blue-700/80">
+          <div className="mt-1 flex items-center justify-between text-[11px] text-brown-500">
             <span>
               {qty}× · subtotal {formatBRL(estimatedTotal(item))}
             </span>
@@ -238,7 +238,7 @@ export default function ItemRow({
               value={item.notes ?? ""}
               onChange={(e) => onUpdate({ notes: e.target.value })}
               placeholder="Observação ou link da loja"
-              className="mt-2 w-full rounded border border-blue-200 bg-blue-50/50 px-2 py-1 text-xs"
+              className="mt-2 w-full rounded border border-cream-200 bg-cream-50/60 px-2 py-1 text-xs"
               onBlur={() => {
                 if (!item.notes) setNotesOpen(false);
               }}
@@ -246,7 +246,7 @@ export default function ItemRow({
           ) : (
             <button
               onClick={() => setNotesOpen(true)}
-              className="mt-1 text-[11px] text-blue-500 hover:text-blue-600"
+              className="mt-1 text-[11px] text-moss-500 hover:text-moss-600"
             >
               + observação
             </button>
@@ -270,11 +270,11 @@ function PriceField({
 }) {
   return (
     <label className="block">
-      <span className="text-[10px] uppercase tracking-wide text-blue-500">
+      <span className="text-[10px] uppercase tracking-wide text-brown-500">
         {label}
       </span>
-      <div className="flex items-center rounded border border-blue-200 bg-white px-1.5">
-        <span className="text-xs text-blue-500">R$</span>
+      <div className="flex items-center rounded border border-cream-200 bg-white px-1.5">
+        <span className="text-xs text-brown-500">R$</span>
         <input
           type="number"
           min={0}

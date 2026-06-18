@@ -14,12 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Enxoval do Timóteo",
+  title: "Enxoval do Timóteo Aquino Santos",
   description: "Lista compartilhada do enxoval do Timóteo, com controle de compras, gastos e presentes",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Enxoval do Timóteo",
+    title: "Enxoval do Timóteo Aquino Santos",
   },
   icons: {
     icon: "/icon-512.png",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#2563eb",
+  themeColor: "#57752f",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,

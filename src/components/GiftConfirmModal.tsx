@@ -19,12 +19,12 @@ export default function GiftConfirmModal({
   return (
     <Modal title="Confirmar presente" onClose={onClose}>
       <div className="flex flex-col gap-4">
-        <p className="text-sm text-blue-900">
+        <p className="text-sm text-moss-900">
           Confirmar que você vai presentear/comprou <strong>{itemName}</strong> para o
           Timóteo?
         </p>
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-blue-800/90">
+          <span className="mb-1 block text-xs font-medium text-brown-600">
             Nome de quem presenteou (opcional)
           </span>
           <input
@@ -32,7 +32,7 @@ export default function GiftConfirmModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ex: Vovó, Tia Ana"
-            className="w-full rounded border border-blue-200 px-3 py-2.5 text-sm"
+            className="w-full rounded border border-cream-200 px-3 py-2.5 text-sm"
           />
         </label>
         <button
@@ -41,7 +41,7 @@ export default function GiftConfirmModal({
         >
           🎁 Confirmar presente
         </button>
-        <button onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-blue-600">
+        <button onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-moss-600">
           Cancelar
         </button>
       </div>

@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 /*
- * This app always uses the light blue palette, regardless of the
- * device's system theme. Letting the iPhone's dark mode bleed in here
- * (via prefers-color-scheme) made the body flip to near-black while
- * the cards stayed light, which is the broken look users were seeing.
+ * This app always uses the light "fazendinha" (moss green) palette,
+ * regardless of the device's system theme. Letting the iPhone's dark
+ * mode bleed in here (via prefers-color-scheme) made the body flip to
+ * near-black while the cards stayed light, which is the broken look
+ * users were seeing.
  */
 :root {
-  --background: #eff6ff;
-  --foreground: #172554;
+  --background: #faf7ef;
+  --foreground: #1f2a14;
   color-scheme: light;
 }
 
@@ -17,6 +18,28 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-moss-50: #eff3e3;
+  --color-moss-100: #dee8c4;
+  --color-moss-200: #c3d69d;
+  --color-moss-300: #a7c073;
+  --color-moss-400: #8aab54;
+  --color-moss-500: #6f9140;
+  --color-moss-600: #57752f;
+  --color-moss-700: #455d26;
+  --color-moss-800: #36481e;
+  --color-moss-900: #293617;
+  --color-moss-950: #1b260f;
+
+  --color-cream-50: #faf7ef;
+  --color-cream-100: #f1e9d8;
+  --color-cream-200: #e4d6b9;
+  --color-cream-300: #d3bf93;
+
+  --color-brown-400: #b59b76;
+  --color-brown-500: #96764c;
+  --color-brown-600: #6b4f30;
+  --color-brown-700: #54381f;
 }
 
 html {

@@ -37,18 +37,19 @@ export default function AccessGate({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-950/80 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-moss-950/80 p-6">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-xl">
-        <div className="mb-2 text-4xl">👶</div>
-        <h1 className="mb-1 text-lg font-bold text-blue-950">Enxoval do Timóteo</h1>
+        <div className="mb-2 text-4xl">🐣</div>
+        <h1 className="mb-1 text-lg font-bold text-moss-950">Enxoval do Timóteo Aquino Santos</h1>
 
         {step === "role" && (
           <>
-            <p className="mb-6 text-sm text-blue-800/90">Quem é você?</p>
+            <p className="mb-1 text-sm text-brown-600">🌾 Lista compartilhada do nosso pequeno</p>
+            <p className="mb-6 text-sm text-brown-600">Quem é você?</p>
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => chooseRole("papai")}
-                className="rounded-xl bg-blue-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
+                className="rounded-xl bg-moss-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-moss-700 active:scale-[0.98]"
               >
                 👨 Sou Papai
               </button>
@@ -70,10 +71,10 @@ export default function AccessGate({
 
         {step === "code" && (
           <>
-            <p className="mb-1 text-sm text-blue-800/90">
+            <p className="mb-1 text-sm text-brown-600">
               Digite o código da lista do Timóteo:
             </p>
-            <p className="mb-4 text-xs text-blue-600/80">
+            <p className="mb-4 text-xs text-brown-500">
               Peça o código para quem te convidou, se não souber.
             </p>
             <input
@@ -85,7 +86,7 @@ export default function AccessGate({
               }}
               onKeyDown={(e) => e.key === "Enter" && confirmCode()}
               placeholder="Código da lista"
-              className="w-full rounded-xl border border-blue-200 px-3 py-3 text-center text-base tracking-wide outline-none focus:border-blue-500"
+              className="w-full rounded-xl border border-cream-200 px-3 py-3 text-center text-base tracking-wide outline-none focus:border-moss-500"
             />
             {error && (
               <p className="mt-2 text-sm font-medium text-red-600" role="alert">
@@ -95,13 +96,13 @@ export default function AccessGate({
             <div className="mt-5 flex flex-col gap-2">
               <button
                 onClick={confirmCode}
-                className="rounded-xl bg-blue-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
+                className="rounded-xl bg-moss-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-moss-700 active:scale-[0.98]"
               >
                 Entrar
               </button>
               <button
                 onClick={() => setStep("role")}
-                className="rounded-xl px-4 py-2 text-sm text-blue-600"
+                className="rounded-xl px-4 py-2 text-sm text-moss-600"
               >
                 ← Voltar
               </button>
@@ -111,10 +112,10 @@ export default function AccessGate({
 
         {step === "guestName" && (
           <>
-            <p className="mb-1 text-sm text-blue-800/90">
+            <p className="mb-1 text-sm text-brown-600">
               Quer dizer quem está presenteando? (opcional)
             </p>
-            <p className="mb-4 text-xs text-blue-600/80">
+            <p className="mb-4 text-xs text-brown-500">
               Ex: Vovó, Tia Ana — ou deixe em branco.
             </p>
             <input
@@ -123,7 +124,7 @@ export default function AccessGate({
               onChange={(e) => setGuestName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onComplete("convidado", guestName)}
               placeholder="Seu nome (opcional)"
-              className="w-full rounded-xl border border-blue-200 px-3 py-3 text-center text-base outline-none focus:border-blue-500"
+              className="w-full rounded-xl border border-cream-200 px-3 py-3 text-center text-base outline-none focus:border-moss-500"
             />
             <div className="mt-5 flex flex-col gap-2">
               <button

@@ -56,7 +56,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-blue-50/40 pb-24">
+    <div className="flex min-h-screen flex-col bg-cream-50 pb-24">
       <Header
         dueDate={settings.dueDate}
         role={role}
@@ -85,11 +85,11 @@ export default function Home() {
       )}
 
       {loading ? (
-        <p className="px-4 py-8 text-center text-sm text-blue-700/80">
+        <p className="px-4 py-8 text-center text-sm text-brown-600">
           Carregando enxoval...
         </p>
       ) : filtered.length === 0 ? (
-        <p className="px-4 py-8 text-center text-sm text-blue-700/80">
+        <p className="px-4 py-8 text-center text-sm text-brown-600">
           Nenhum item encontrado.
         </p>
       ) : (
@@ -120,7 +120,7 @@ export default function Home() {
       {role !== "convidado" && (
         <button
           onClick={() => setShowAdd(true)}
-          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl text-white shadow-lg active:scale-95"
+          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-moss-600 text-2xl text-white shadow-lg active:scale-95"
           aria-label="Adicionar item"
         >
           +

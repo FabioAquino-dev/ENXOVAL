@@ -23,11 +23,11 @@ export default function Header({
   const cd = countdown(dueDate);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-blue-100 bg-blue-50/95 px-4 py-3 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-cream-200 bg-cream-50/95 px-4 py-3 backdrop-blur">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-base font-bold text-blue-950">Enxoval do Timóteo 👶</h1>
-          <p className="text-xs text-blue-800/90">
+          <h1 className="text-base font-bold text-moss-950">🐣 Enxoval do Timóteo Aquino Santos</h1>
+          <p className="text-xs text-brown-600">
             {cd.isPast
               ? "O bebê já pode ter chegado! 🎉"
               : `Faltam ~${cd.weeks} semanas (${cd.days} dias) para a data prevista`}
@@ -41,7 +41,7 @@ export default function Header({
           {role !== "convidado" && (
             <button
               onClick={onOpenSettings}
-              className="rounded-full bg-white p-2 text-blue-700 shadow-sm"
+              className="rounded-full bg-white p-2 text-moss-700 shadow-sm"
               aria-label="Configurações"
             >
               ⚙️
@@ -49,7 +49,7 @@ export default function Header({
           )}
         </div>
       </div>
-      <div className="mt-1 text-[11px] text-blue-700/80">Você é {ROLE_LABEL[role]}</div>
+      <div className="mt-1 text-[11px] text-brown-600">Você é {ROLE_LABEL[role]}</div>
     </header>
   );
 }
