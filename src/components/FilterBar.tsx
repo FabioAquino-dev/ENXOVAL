@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { CATEGORIES, CATEGORY_ICON, Category } from "@/lib/types";
+import { CATEGORIES, CATEGORY_ICON, Category, Role } from "@/lib/types";
 
 export default function FilterBar({
   search,
@@ -9,6 +9,7 @@ export default function FilterBar({
   onCategory,
   hidePurchased,
   onHidePurchased,
+  role,
 }: {
   search: string;
   onSearch: (v: string) => void;
@@ -16,6 +17,7 @@ export default function FilterBar({
   onCategory: (c: Category | "Todas") => void;
   hidePurchased: boolean;
   onHidePurchased: (v: boolean) => void;
+  role: Role;
 }) {
   return (
     <div className="px-4 py-2">
@@ -47,7 +49,7 @@ export default function FilterBar({
           onChange={(e) => onHidePurchased(e.target.checked)}
           className="accent-blue-600"
         />
-        Ocultar itens já comprados
+        {role === "convidado" ? "Ocultar itens já garantidos" : "Ocultar itens já comprados"}
       </label>
     </div>
   );

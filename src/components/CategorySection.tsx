@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Category, LayetteItem, Person, estimatedTotal, totalQty } from "@/lib/types";
+import { Category, LayetteItem, Role, estimatedTotal, totalQty } from "@/lib/types";
 import { formatBRL } from "@/lib/format";
 import ItemRow from "./ItemRow";
 
@@ -9,29 +9,37 @@ export default function CategorySection({
   category,
   icon,
   items,
-  person,
+  role,
+  guestName,
   onToggle,
   onUpdate,
   onDelete,
+  onMarkGifted,
+  onUndoGift,
+  onGiftConfirmed,
 }: {
   category: Category;
   icon: string;
   items: LayetteItem[];
-  person: Person | null;
+  role: Role;
+  guestName?: string;
   onToggle: (id: string, purchased: boolean) => void;
   onUpdate: (id: string, partial: Partial<LayetteItem>) => void;
   onDelete: (id: string) => void;
+  onMarkGifted: (id: string, guestName?: string) => Promise<void> | void;
+  onUndoGift: (id: string) => void;
+  onGiftConfirmed?: () => void;
 }) {
   const [open, setOpen] = useState(true);
 
   if (items.length === 0) return null;
 
   const totalItems = items.reduce((sum, it) => sum + totalQty(it), 0);
-  const purchasedItems = items
-    .filter((it) => it.purchased)
+  const obtainedItems = items
+    .filter((it) => it.purchased || it.gifted)
     .reduce((sum, it) => sum + totalQty(it), 0);
   const subtotal = items.reduce((sum, it) => sum + estimatedTotal(it), 0);
-  const done = totalItems > 0 && purchasedItems === totalItems;
+  const done = totalItems > 0 && obtainedItems === totalItems;
 
   return (
     <section className="px-4 py-2">
@@ -45,7 +53,8 @@ export default function CategorySection({
           {done && <span className="text-emerald-600">✓</span>}
         </span>
         <span className="flex items-center gap-2 text-xs text-blue-800/90">
-          {purchasedItems}/{totalItems} · {formatBRL(subtotal)}
+          {obtainedItems}/{totalItems}
+          {role !== "convidado" && <> · {formatBRL(subtotal)}</>}
           <span className={`transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
         </span>
       </button>
@@ -56,10 +65,14 @@ export default function CategorySection({
             <ItemRow
               key={item.id}
               item={item}
-              person={person}
+              role={role}
+              guestName={guestName}
               onToggle={(p) => onToggle(item.id, p)}
               onUpdate={(partial) => onUpdate(item.id, partial)}
               onDelete={() => onDelete(item.id)}
+              onMarkGifted={(name) => onMarkGifted(item.id, name)}
+              onUndoGift={() => onUndoGift(item.id)}
+              onGiftConfirmed={onGiftConfirmed}
             />
           ))}
         </div>

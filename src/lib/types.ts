@@ -4,6 +4,11 @@ export const SIZES: Size[] = ["RN", "P", "M", "G"];
 
 export type Person = "papai" | "mamae";
 
+/** Who is currently using the app: parent (full access) or guest (gift-only). */
+export type Role = Person | "convidado";
+
+export type ItemStatus = "pending" | "purchased" | "gifted";
+
 export type Category =
   | "Roupas"
   | "Acessórios"
@@ -58,6 +63,11 @@ export interface LayetteItem {
   purchased: boolean;
   purchasedBy?: Person | null;
   purchasedAt?: number | null;
+  /** True once a guest has marked this item as gifted to the baby. */
+  gifted?: boolean;
+  giftedByRole?: "convidado" | null;
+  giftedByName?: string | null;
+  giftedAt?: number | null;
   notes?: string;
   custom?: boolean;
   createdAt?: number;
@@ -87,4 +97,15 @@ export function realTotal(item: LayetteItem): number {
   if (!item.purchased) return 0;
   const price = item.realPrice ?? item.estimatedPrice;
   return totalQty(item) * price;
+}
+
+/**
+ * Derived rather than stored: `gifted` and `purchased` are mutually
+ * exclusive in the UI, so computing status from them avoids a third
+ * field that could drift out of sync.
+ */
+export function itemStatus(item: LayetteItem): ItemStatus {
+  if (item.gifted) return "gifted";
+  if (item.purchased) return "purchased";
+  return "pending";
 }

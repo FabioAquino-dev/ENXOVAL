@@ -14,12 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Enxoval do Bebê",
-  description: "Lista compartilhada de enxoval do bebê, com controle de compras e gastos",
+  title: "Enxoval do Timóteo",
+  description: "Lista compartilhada do enxoval do Timóteo, com controle de compras, gastos e presentes",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Enxoval",
+    title: "Enxoval do Timóteo",
   },
   icons: {
     icon: "/icon-512.png",

@@ -1,18 +1,22 @@
 ﻿"use client";
 
-import { Person } from "@/lib/types";
+import { Role } from "@/lib/types";
 import { countdown } from "@/lib/format";
 
+const ROLE_LABEL: Record<Role, string> = {
+  papai: "👨 Papai",
+  mamae: "👩 Mamãe",
+  convidado: "🎁 Convidado",
+};
+
 export default function Header({
-  babyName,
   dueDate,
-  person,
+  role,
   synced,
   onOpenSettings,
 }: {
-  babyName?: string;
   dueDate: string;
-  person: Person | null;
+  role: Role;
   synced: boolean;
   onOpenSettings: () => void;
 }) {
@@ -22,9 +26,7 @@ export default function Header({
     <header className="sticky top-0 z-30 border-b border-blue-100 bg-blue-50/95 px-4 py-3 backdrop-blur">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-base font-bold text-blue-950">
-            Enxoval{babyName ? ` do ${babyName}` : " do nosso menino"} 👶
-          </h1>
+          <h1 className="text-base font-bold text-blue-950">Enxoval do Timóteo 👶</h1>
           <p className="text-xs text-blue-800/90">
             {cd.isPast
               ? "O bebê já pode ter chegado! 🎉"
@@ -36,20 +38,18 @@ export default function Header({
             className={`h-2 w-2 rounded-full ${synced ? "bg-emerald-500" : "bg-amber-500"}`}
             title={synced ? "Sincronizado" : "Sem sincronização"}
           />
-          <button
-            onClick={onOpenSettings}
-            className="rounded-full bg-white p-2 text-blue-700 shadow-sm"
-            aria-label="Configurações"
-          >
-            ⚙️
-          </button>
+          {role !== "convidado" && (
+            <button
+              onClick={onOpenSettings}
+              className="rounded-full bg-white p-2 text-blue-700 shadow-sm"
+              aria-label="Configurações"
+            >
+              ⚙️
+            </button>
+          )}
         </div>
       </div>
-      {person && (
-        <div className="mt-1 text-[11px] text-blue-700/80">
-          Você é {person === "papai" ? "👨 Papai" : "👩 Mamãe"}
-        </div>
-      )}
+      <div className="mt-1 text-[11px] text-blue-700/80">Você é {ROLE_LABEL[role]}</div>
     </header>
   );
 }

@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useEnxoval } from "@/lib/useEnxoval";
-import { usePerson } from "@/lib/usePerson";
+import { useAccess } from "@/lib/access";
 import { CATEGORIES, CATEGORY_ICON, Category } from "@/lib/types";
-import PersonGate from "@/components/PersonGate";
+import AccessGate from "@/components/AccessGate";
 import Header from "@/components/Header";
 import Dashboard from "@/components/Dashboard";
 import FilterBar from "@/components/FilterBar";
@@ -13,49 +13,58 @@ import AddItemForm from "@/components/AddItemForm";
 import SettingsPanel from "@/components/SettingsPanel";
 
 export default function Home() {
-  const { items, settings, loading, synced, togglePurchased, updateItem, addCustomItem, removeItem, updateSettings } =
-    useEnxoval();
-  const { person, setPerson } = usePerson();
+  const { role, guestName, grantAccess, clearAccess } = useAccess();
+  const {
+    items,
+    settings,
+    loading,
+    synced,
+    togglePurchased,
+    updateItem,
+    addCustomItem,
+    removeItem,
+    updateSettings,
+    markGifted,
+    undoGift,
+  } = useEnxoval(role);
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category | "Todas">("Todas");
   const [hidePurchased, setHidePurchased] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [forceGate, setForceGate] = useState(false);
+  const [thanksMessage, setThanksMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!thanksMessage) return;
+    const t = setTimeout(() => setThanksMessage(null), 4000);
+    return () => clearTimeout(t);
+  }, [thanksMessage]);
 
   const filtered = useMemo(() => {
     return items.filter((it) => {
       if (activeCategory !== "Todas" && it.category !== activeCategory) return false;
-      if (hidePurchased && it.purchased) return false;
+      if (hidePurchased && (it.purchased || it.gifted)) return false;
       if (search && !`${it.name} ${it.detail ?? ""}`.toLowerCase().includes(search.toLowerCase()))
         return false;
       return true;
     });
   }, [items, activeCategory, hidePurchased, search]);
 
-  if (!person || forceGate) {
-    return (
-      <PersonGate
-        onSelect={(p) => {
-          setPerson(p);
-          setForceGate(false);
-        }}
-      />
-    );
+  if (!role) {
+    return <AccessGate onComplete={(r, name) => grantAccess(r, name)} />;
   }
 
   return (
     <div className="flex min-h-screen flex-col bg-blue-50/40 pb-24">
       <Header
-        babyName={settings.babyName}
         dueDate={settings.dueDate}
-        person={person}
+        role={role}
         synced={synced}
         onOpenSettings={() => setShowSettings(true)}
       />
 
-      <Dashboard items={items} />
+      <Dashboard items={items} role={role} />
 
       <FilterBar
         search={search}
@@ -64,7 +73,16 @@ export default function Home() {
         onCategory={setActiveCategory}
         hidePurchased={hidePurchased}
         onHidePurchased={setHidePurchased}
+        role={role}
       />
+
+      {thanksMessage && (
+        <div className="px-4 pb-2">
+          <div className="rounded-xl bg-emerald-500 px-4 py-3 text-center text-sm font-semibold text-white shadow-md">
+            {thanksMessage}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <p className="px-4 py-8 text-center text-sm text-blue-700/80">
@@ -82,36 +100,46 @@ export default function Home() {
               category={cat}
               icon={CATEGORY_ICON[cat]}
               items={filtered.filter((it) => it.category === cat)}
-              person={person}
-              onToggle={(id, purchased) => togglePurchased(id, purchased, person)}
+              role={role}
+              guestName={guestName}
+              onToggle={(id, purchased) =>
+                togglePurchased(id, purchased, role === "convidado" ? null : role)
+              }
               onUpdate={updateItem}
               onDelete={removeItem}
+              onMarkGifted={markGifted}
+              onUndoGift={undoGift}
+              onGiftConfirmed={() =>
+                setThanksMessage("Obrigado! Esse item foi marcado como presente para o Timóteo. 🎁")
+              }
             />
           ))}
         </div>
       )}
 
-      <button
-        onClick={() => setShowAdd(true)}
-        className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl text-white shadow-lg active:scale-95"
-        aria-label="Adicionar item"
-      >
-        +
-      </button>
+      {role !== "convidado" && (
+        <button
+          onClick={() => setShowAdd(true)}
+          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl text-white shadow-lg active:scale-95"
+          aria-label="Adicionar item"
+        >
+          +
+        </button>
+      )}
 
-      {showAdd && (
+      {showAdd && role !== "convidado" && (
         <AddItemForm onClose={() => setShowAdd(false)} onAdd={addCustomItem} />
       )}
 
-      {showSettings && (
+      {showSettings && role !== "convidado" && (
         <SettingsPanel
           settings={settings}
-          person={person}
+          role={role}
           onClose={() => setShowSettings(false)}
           onSave={updateSettings}
-          onChangePerson={() => {
+          onChangeRole={() => {
             setShowSettings(false);
-            setForceGate(true);
+            clearAccess();
           }}
         />
       )}

@@ -1,21 +1,27 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { AppSettings, Person } from "@/lib/types";
+import { AppSettings, Role } from "@/lib/types";
 import Modal from "./Modal";
+
+const ROLE_LABEL: Record<Role, string> = {
+  papai: "Papai",
+  mamae: "Mamãe",
+  convidado: "Convidado",
+};
 
 export default function SettingsPanel({
   settings,
-  person,
+  role,
   onClose,
   onSave,
-  onChangePerson,
+  onChangeRole,
 }: {
   settings: AppSettings;
-  person: Person | null;
+  role: Role;
   onClose: () => void;
   onSave: (partial: Partial<AppSettings>) => void;
-  onChangePerson: () => void;
+  onChangeRole: () => void;
 }) {
   const [babyName, setBabyName] = useState(settings.babyName ?? "");
   const [dueDate, setDueDate] = useState(settings.dueDate);
@@ -61,10 +67,10 @@ export default function SettingsPanel({
           Salvar
         </button>
         <button
-          onClick={onChangePerson}
+          onClick={onChangeRole}
           className="rounded-xl border border-blue-200 px-4 py-2 text-sm text-blue-700"
         >
-          Trocar identidade ({person === "papai" ? "Papai" : "Mamãe"})
+          Trocar identidade ({ROLE_LABEL[role]})
         </button>
       </div>
     </Modal>

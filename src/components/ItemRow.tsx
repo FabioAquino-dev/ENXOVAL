@@ -1,24 +1,121 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { LayetteItem, Person, SIZES, estimatedTotal, totalQty } from "@/lib/types";
+import { LayetteItem, Role, SIZES, estimatedTotal, totalQty } from "@/lib/types";
 import { formatBRL } from "@/lib/format";
+import GiftConfirmModal from "./GiftConfirmModal";
+
+const PURCHASED_LABEL: Record<string, string> = {
+  papai: "Comprado pelo Papai",
+  mamae: "Comprado pela Mamãe",
+};
 
 export default function ItemRow({
   item,
-  person,
+  role,
+  guestName,
   onToggle,
   onUpdate,
   onDelete,
+  onMarkGifted,
+  onUndoGift,
+  onGiftConfirmed,
 }: {
   item: LayetteItem;
-  person: Person | null;
+  role: Role;
+  guestName?: string;
   onToggle: (purchased: boolean) => void;
   onUpdate: (partial: Partial<LayetteItem>) => void;
   onDelete: () => void;
+  onMarkGifted: (guestName?: string) => Promise<void> | void;
+  onUndoGift: () => void;
+  onGiftConfirmed?: () => void;
 }) {
   const [notesOpen, setNotesOpen] = useState(Boolean(item.notes));
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showGiftConfirm, setShowGiftConfirm] = useState(false);
   const qty = totalQty(item);
+
+  if (role === "convidado") {
+    return (
+      <>
+        <div
+          className={`rounded-xl border p-3.5 transition ${
+            item.gifted
+              ? "border-emerald-200 bg-emerald-50/70"
+              : item.purchased
+                ? "border-blue-100 bg-blue-50/40"
+                : "border-blue-100 bg-white"
+          }`}
+        >
+          <p className="text-sm font-semibold text-blue-950">{item.name}</p>
+          {item.detail && <p className="text-xs text-blue-700/80">{item.detail}</p>}
+          <p className="mt-1 text-[11px] text-blue-700/80">
+            {qty}× {item.unit} · ≈ {formatBRL(estimatedTotal(item))}
+          </p>
+
+          {item.gifted ? (
+            <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+              <span>🎁</span>
+              <span>
+                {item.giftedByName ? `Presenteado por ${item.giftedByName}` : "Presente recebido"}
+              </span>
+            </div>
+          ) : item.purchased ? (
+            <div className="mt-2 text-sm font-medium text-blue-700">
+              ✓ Já garantido pela família
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowGiftConfirm(true)}
+              className="mt-2.5 w-full rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 active:scale-[0.98]"
+            >
+              🎁 Vou presentear
+            </button>
+          )}
+        </div>
+
+        {showGiftConfirm && (
+          <GiftConfirmModal
+            itemName={item.name}
+            defaultGuestName={guestName}
+            onClose={() => setShowGiftConfirm(false)}
+            onConfirm={async (name) => {
+              await onMarkGifted(name);
+              setShowGiftConfirm(false);
+              onGiftConfirmed?.();
+            }}
+          />
+        )}
+      </>
+    );
+  }
+
+  // Papai / Mamãe — once gifted, editing is collapsed behind an undo action
+  // so the list doesn't show stale price/quantity fields for a received item.
+  if (item.gifted) {
+    return (
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-sm font-semibold text-blue-950">{item.name}</p>
+            <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+              <span>🎁</span>
+              <span>
+                {item.giftedByName ? `Presenteado por ${item.giftedByName}` : "Presente recebido"}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={onUndoGift}
+            className="shrink-0 rounded-full bg-white px-2.5 py-1 text-xs text-blue-600 shadow-sm"
+          >
+            Desfazer
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -34,6 +131,7 @@ export default function ItemRow({
           checked={item.purchased}
           onChange={(e) => onToggle(e.target.checked)}
           className="mt-1 h-5 w-5 shrink-0 accent-blue-600"
+          aria-label={`Marcar ${item.name} como comprado`}
         />
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
@@ -44,13 +142,30 @@ export default function ItemRow({
             >
               {item.name}
             </p>
-            <button
-              onClick={onDelete}
-              className="shrink-0 text-xs text-blue-400 hover:text-red-500"
-              aria-label="Remover item"
-            >
-              ✕
-            </button>
+            {confirmDelete ? (
+              <span className="flex shrink-0 items-center gap-1">
+                <button
+                  onClick={onDelete}
+                  className="rounded bg-red-500 px-2 py-0.5 text-[11px] font-medium text-white"
+                >
+                  Excluir
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="rounded bg-blue-50 px-2 py-0.5 text-[11px] text-blue-600"
+                >
+                  Cancelar
+                </button>
+              </span>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="shrink-0 text-xs text-blue-400 hover:text-red-500"
+                aria-label="Remover item"
+              >
+                ✕
+              </button>
+            )}
           </div>
           {item.detail && (
             <p className="text-xs text-blue-700/80">{item.detail}</p>
@@ -112,7 +227,7 @@ export default function ItemRow({
             </span>
             {item.purchased && (
               <span className="font-medium text-emerald-700">
-                ✓ {item.purchasedBy === "papai" ? "Papai" : item.purchasedBy === "mamae" ? "Mamãe" : person ? (person === "papai" ? "Papai" : "Mamãe") : "comprado"}
+                ✓ {item.purchasedBy ? PURCHASED_LABEL[item.purchasedBy] : "Comprado"}
               </span>
             )}
           </div>

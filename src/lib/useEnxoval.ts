@@ -5,47 +5,79 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
-  runTransaction,
   setDoc,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { db, ensureAuth, isFirebaseConfigured } from "./firebase";
-import { AppSettings, LayetteItem, Person } from "./types";
+import { FAMILY_ID } from "./access";
+import { AppSettings, LayetteItem, Person, Role } from "./types";
 import { buildDefaultItems } from "./defaultItems";
 
-const ITEMS_COLLECTION = "items";
-const SETTINGS_DOC = "meta/settings";
-const SEED_FLAG_DOC = "meta/seed";
+const FAMILY_ITEMS_PATH = `families/${FAMILY_ID}/items`;
+const FAMILY_SETTINGS_DOC = `families/${FAMILY_ID}/settings/main`;
+const FAMILY_INIT_FLAG_DOC = `families/${FAMILY_ID}/meta/init`;
+
+// Pre-existing top-level paths used before the family/list structure was
+// introduced. Kept read-only so any real data already synced there gets
+// copied into the family path once, instead of silently orphaned.
+const LEGACY_ITEMS_COLLECTION = "items";
+const LEGACY_SETTINGS_DOC = "meta/settings";
 
 const DEFAULT_SETTINGS: AppSettings = {
   dueDate: "2026-09-16",
-  babyName: "",
+  babyName: "Timóteo",
   budgetGoal: 0,
 };
 
-async function seedIfEmpty() {
+async function initFamilyData() {
   const firestore = db;
   if (!firestore) return;
-  const flagRef = doc(firestore, SEED_FLAG_DOC);
-  await runTransaction(firestore, async (tx) => {
-    const flagSnap = await tx.get(flagRef);
-    if (flagSnap.exists()) return;
-    tx.set(flagRef, { seededAt: Date.now() });
-    for (const item of buildDefaultItems()) {
-      const ref = doc(firestore, ITEMS_COLLECTION, item.id);
-      tx.set(ref, item);
+
+  const initRef = doc(firestore, FAMILY_INIT_FLAG_DOC);
+  const initSnap = await getDoc(initRef);
+  if (initSnap.exists()) return;
+
+  const [legacyItemsSnap, legacySettingsSnap] = await Promise.all([
+    getDocs(collection(firestore, LEGACY_ITEMS_COLLECTION)).catch(() => null),
+    getDoc(doc(firestore, LEGACY_SETTINGS_DOC)).catch(() => null),
+  ]);
+
+  const batch = writeBatch(firestore);
+  let migratedFromLegacy = 0;
+
+  if (legacyItemsSnap && !legacyItemsSnap.empty) {
+    legacyItemsSnap.docs.forEach((d) => {
+      batch.set(doc(firestore, FAMILY_ITEMS_PATH, d.id), d.data());
+      migratedFromLegacy += 1;
+    });
+    if (legacySettingsSnap?.exists()) {
+      batch.set(doc(firestore, FAMILY_SETTINGS_DOC), legacySettingsSnap.data(), {
+        merge: true,
+      });
     }
-  });
+  } else {
+    buildDefaultItems().forEach((item) => {
+      batch.set(doc(firestore, FAMILY_ITEMS_PATH, item.id), item);
+    });
+  }
+
+  batch.set(initRef, { initializedAt: Date.now(), migratedFromLegacy });
+  await batch.commit();
 }
 
-export function useEnxoval() {
+export function useEnxoval(role: Role | null) {
   const [items, setItems] = useState<LayetteItem[]>([]);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [synced, setSynced] = useState(isFirebaseConfigured);
+
+  const isGuest = role === "convidado";
 
   useEffect(() => {
     const firestore = db;
@@ -67,9 +99,12 @@ export function useEnxoval() {
       .then(() => {
         if (cancelled) return;
 
-        seedIfEmpty().catch((err) => console.error("seed error", err));
+        initFamilyData().catch((err) => console.error("family init error", err));
 
-        const itemsQuery = query(collection(firestore, ITEMS_COLLECTION), orderBy("order"));
+        const itemsQuery = query(
+          collection(firestore, FAMILY_ITEMS_PATH),
+          orderBy("order"),
+        );
         unsubItems = onSnapshot(
           itemsQuery,
           (snap) => {
@@ -87,12 +122,14 @@ export function useEnxoval() {
         );
 
         unsubSettings = onSnapshot(
-          doc(firestore, SETTINGS_DOC),
+          doc(firestore, FAMILY_SETTINGS_DOC),
           (snap) => {
             if (snap.exists()) {
               setSettings({ ...DEFAULT_SETTINGS, ...(snap.data() as AppSettings) });
             } else {
-              setDoc(doc(firestore, SETTINGS_DOC), DEFAULT_SETTINGS).catch(console.error);
+              setDoc(doc(firestore, FAMILY_SETTINGS_DOC), DEFAULT_SETTINGS).catch(
+                console.error,
+              );
             }
           },
           (err) => console.error("settings sync error", err),
@@ -111,17 +148,27 @@ export function useEnxoval() {
     };
   }, []);
 
+  /** Guests can only mark gifts — every other mutation is a no-op for them. */
+  const guardEditable = useCallback(() => {
+    if (isGuest) {
+      console.warn("Ação bloqueada: convidados não podem editar a lista.");
+      return false;
+    }
+    return true;
+  }, [isGuest]);
+
   const updateItem = useCallback(
     async (id: string, partial: Partial<LayetteItem>) => {
+      if (!guardEditable()) return;
       if (!db) {
         setItems((prev) =>
           prev.map((it) => (it.id === id ? { ...it, ...partial } : it)),
         );
         return;
       }
-      await updateDoc(doc(db, ITEMS_COLLECTION, id), partial);
+      await updateDoc(doc(db, FAMILY_ITEMS_PATH, id), partial);
     },
-    [],
+    [guardEditable],
   );
 
   const togglePurchased = useCallback(
@@ -135,8 +182,57 @@ export function useEnxoval() {
     [updateItem],
   );
 
+  /** The only mutation guests are allowed to perform. */
+  const markGifted = useCallback(
+    async (id: string, giftedByName?: string) => {
+      if (role !== "convidado") {
+        console.warn("markGifted é exclusivo do modo convidado.");
+        return;
+      }
+      const current = items.find((it) => it.id === id);
+      if (current?.purchased || current?.gifted) return;
+
+      const partial: Partial<LayetteItem> = {
+        gifted: true,
+        giftedByRole: "convidado",
+        giftedByName: giftedByName?.trim() || null,
+        giftedAt: Date.now(),
+      };
+      if (!db) {
+        setItems((prev) =>
+          prev.map((it) => (it.id === id ? { ...it, ...partial } : it)),
+        );
+        return;
+      }
+      await updateDoc(doc(db, FAMILY_ITEMS_PATH, id), partial);
+    },
+    [role, items],
+  );
+
+  /** Only Papai/Mamãe can undo a gift mark (e.g. if it was a mistake). */
+  const undoGift = useCallback(
+    async (id: string) => {
+      if (!guardEditable()) return;
+      const partial: Partial<LayetteItem> = {
+        gifted: false,
+        giftedByRole: null,
+        giftedByName: null,
+        giftedAt: null,
+      };
+      if (!db) {
+        setItems((prev) =>
+          prev.map((it) => (it.id === id ? { ...it, ...partial } : it)),
+        );
+        return;
+      }
+      await updateDoc(doc(db, FAMILY_ITEMS_PATH, id), partial);
+    },
+    [guardEditable],
+  );
+
   const addCustomItem = useCallback(
     async (partial: Omit<LayetteItem, "id" | "purchased" | "custom">) => {
+      if (!guardEditable()) return;
       const newItem: LayetteItem = {
         ...partial,
         id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -148,26 +244,34 @@ export function useEnxoval() {
         setItems((prev) => [...prev, newItem]);
         return;
       }
-      await setDoc(doc(db, ITEMS_COLLECTION, newItem.id), newItem);
+      await setDoc(doc(db, FAMILY_ITEMS_PATH, newItem.id), newItem);
     },
-    [],
+    [guardEditable],
   );
 
-  const removeItem = useCallback(async (id: string) => {
-    if (!db) {
-      setItems((prev) => prev.filter((it) => it.id !== id));
-      return;
-    }
-    await deleteDoc(doc(db, ITEMS_COLLECTION, id));
-  }, []);
+  const removeItem = useCallback(
+    async (id: string) => {
+      if (!guardEditable()) return;
+      if (!db) {
+        setItems((prev) => prev.filter((it) => it.id !== id));
+        return;
+      }
+      await deleteDoc(doc(db, FAMILY_ITEMS_PATH, id));
+    },
+    [guardEditable],
+  );
 
-  const updateSettings = useCallback(async (partial: Partial<AppSettings>) => {
-    if (!db) {
-      setSettings((prev) => ({ ...prev, ...partial }));
-      return;
-    }
-    await setDoc(doc(db, SETTINGS_DOC), partial, { merge: true });
-  }, []);
+  const updateSettings = useCallback(
+    async (partial: Partial<AppSettings>) => {
+      if (!guardEditable()) return;
+      if (!db) {
+        setSettings((prev) => ({ ...prev, ...partial }));
+        return;
+      }
+      await setDoc(doc(db, FAMILY_SETTINGS_DOC), partial, { merge: true });
+    },
+    [guardEditable],
+  );
 
   return {
     items,
@@ -176,6 +280,8 @@ export function useEnxoval() {
     synced,
     updateItem,
     togglePurchased,
+    markGifted,
+    undoGift,
     addCustomItem,
     removeItem,
     updateSettings,
