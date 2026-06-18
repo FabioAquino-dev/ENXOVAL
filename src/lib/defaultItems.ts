@@ -42,6 +42,10 @@ function flat(
 }
 
 export function buildDefaultItems(): LayetteItem[] {
+  // Reset so ids are stable (seed-1, seed-2, ...) no matter how many times
+  // this has already run in this session — getDefaultQuantities() below
+  // calls it again and needs ids that match the originally seeded items.
+  counter = 0;
   return [
     // Roupas
     clothing("Roupas", "Body manga longa", "liso ou estampado, sem capuz", 16, { RN: 4, P: 4, M: 2, G: 2 }),
@@ -111,4 +115,18 @@ export function buildDefaultItems(): LayetteItem[] {
     flat("Maternidade", "Kit saída de maternidade", "body, macacão, gorro, luvas e manta", "kit", 1, 130),
     flat("Maternidade", "Touca e luvas extras", "para o dia da alta", "kit", 1, 25),
   ];
+}
+
+export type QuantityDefaults = Partial<Pick<LayetteItem, "qtyNeeded" | "sizes">>;
+
+/** Original suggested quantities per item, keyed by id, for the "restaurar quantidades" action. */
+export function getDefaultQuantities(): Record<string, QuantityDefaults> {
+  const map: Record<string, QuantityDefaults> = {};
+  for (const item of buildDefaultItems()) {
+    const partial: QuantityDefaults = {};
+    if (item.qtyNeeded !== undefined) partial.qtyNeeded = item.qtyNeeded;
+    if (item.sizes !== undefined) partial.sizes = item.sizes;
+    map[item.id] = partial;
+  }
+  return map;
 }

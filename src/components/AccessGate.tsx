@@ -49,19 +49,19 @@ export default function AccessGate({
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => chooseRole("papai")}
-                className="rounded-xl bg-moss-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-moss-700 active:scale-[0.98]"
+                className="rounded-xl bg-moss-700 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-moss-800 active:scale-[0.98]"
               >
                 👨 Sou Papai
               </button>
               <button
                 onClick={() => chooseRole("mamae")}
-                className="rounded-xl bg-pink-500 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-pink-600 active:scale-[0.98]"
+                className="rounded-xl bg-moss-400 px-4 py-3.5 text-base font-semibold text-moss-950 transition hover:bg-moss-500 active:scale-[0.98]"
               >
                 👩 Sou Mamãe
               </button>
               <button
                 onClick={() => chooseRole("convidado")}
-                className="rounded-xl border-2 border-emerald-400 bg-emerald-50 px-4 py-3.5 text-base font-semibold text-emerald-800 transition hover:bg-emerald-100 active:scale-[0.98]"
+                className="rounded-xl border-2 border-moss-300 bg-moss-50 px-4 py-3.5 text-base font-semibold text-moss-800 transition hover:bg-moss-100 active:scale-[0.98]"
               >
                 🎁 Vou presentear
               </button>
@@ -129,7 +129,7 @@ export default function AccessGate({
             <div className="mt-5 flex flex-col gap-2">
               <button
                 onClick={() => onComplete("convidado", guestName)}
-                className="rounded-xl bg-emerald-500 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-emerald-600 active:scale-[0.98]"
+                className="rounded-xl bg-moss-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-moss-700 active:scale-[0.98]"
               >
                 🎁 Ver presentes para o Timóteo
               </button>

@@ -17,7 +17,7 @@ import {
 import { db, ensureAuth, isFirebaseConfigured } from "./firebase";
 import { FAMILY_ID } from "./access";
 import { AppSettings, LayetteItem, Person, Role } from "./types";
-import { buildDefaultItems } from "./defaultItems";
+import { buildDefaultItems, getDefaultQuantities } from "./defaultItems";
 
 const FAMILY_ITEMS_PATH = `families/${FAMILY_ID}/items`;
 const FAMILY_SETTINGS_DOC = `families/${FAMILY_ID}/settings/main`;
@@ -273,6 +273,27 @@ export function useEnxoval(role: Role | null) {
     [guardEditable],
   );
 
+  /** Restores qtyNeeded/sizes to the original suggested list — leaves price, purchased and gifted state untouched. */
+  const resetQuantitiesToDefault = useCallback(async () => {
+    if (!guardEditable()) return;
+    const defaults = getDefaultQuantities();
+
+    if (!db) {
+      setItems((prev) =>
+        prev.map((it) => (defaults[it.id] ? { ...it, ...defaults[it.id] } : it)),
+      );
+      return;
+    }
+    const batch = writeBatch(db);
+    for (const it of items) {
+      const partial = defaults[it.id];
+      if (partial && Object.keys(partial).length > 0) {
+        batch.update(doc(db, FAMILY_ITEMS_PATH, it.id), partial);
+      }
+    }
+    await batch.commit();
+  }, [guardEditable, items]);
+
   return {
     items,
     settings,
@@ -285,5 +306,6 @@ export function useEnxoval(role: Role | null) {
     addCustomItem,
     removeItem,
     updateSettings,
+    resetQuantitiesToDefault,
   };
 }

@@ -42,9 +42,9 @@ export default function ItemRow({
         <div
           className={`rounded-xl border p-3.5 transition ${
             item.gifted
-              ? "border-emerald-200 bg-emerald-50/70"
+              ? "border-moss-200 bg-moss-50/70"
               : item.purchased
-                ? "border-emerald-200 bg-emerald-50/60"
+                ? "border-moss-200 bg-moss-50/60"
                 : "border-cream-200 bg-white"
           }`}
         >
@@ -55,20 +55,20 @@ export default function ItemRow({
           </p>
 
           {item.gifted ? (
-            <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+            <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-moss-700">
               <span>🎁</span>
               <span>
                 {item.giftedByName ? `Presenteado por ${item.giftedByName}` : "Presente recebido"}
               </span>
             </div>
           ) : item.purchased ? (
-            <div className="mt-2 text-sm font-medium text-emerald-700">
+            <div className="mt-2 text-sm font-medium text-moss-700">
               ✓ Já garantido pela família
             </div>
           ) : (
             <button
               onClick={() => setShowGiftConfirm(true)}
-              className="mt-2.5 w-full rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 active:scale-[0.98]"
+              className="mt-2.5 w-full rounded-xl bg-moss-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-moss-700 active:scale-[0.98]"
             >
               🎁 Vou presentear
             </button>
@@ -95,11 +95,11 @@ export default function ItemRow({
   // so the list doesn't show stale price/quantity fields for a received item.
   if (item.gifted) {
     return (
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
+      <div className="rounded-xl border border-moss-200 bg-moss-50/70 p-3">
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-sm font-semibold text-moss-950">{item.name}</p>
-            <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+            <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-moss-700">
               <span>🎁</span>
               <span>
                 {item.giftedByName ? `Presenteado por ${item.giftedByName}` : "Presente recebido"}
@@ -121,7 +121,7 @@ export default function ItemRow({
     <div
       className={`rounded-xl border p-3 transition ${
         item.purchased
-          ? "border-emerald-200 bg-emerald-50/60"
+          ? "border-moss-200 bg-moss-50/60"
           : "border-cream-200 bg-white"
       }`}
     >
@@ -137,7 +137,7 @@ export default function ItemRow({
           <div className="flex items-start justify-between gap-2">
             <p
               className={`text-sm font-semibold ${
-                item.purchased ? "text-emerald-800 line-through" : "text-moss-950"
+                item.purchased ? "text-moss-800 line-through" : "text-moss-950"
               }`}
             >
               {item.name}
@@ -226,7 +226,7 @@ export default function ItemRow({
               {qty}× · subtotal {formatBRL(estimatedTotal(item))}
             </span>
             {item.purchased && (
-              <span className="font-medium text-emerald-700">
+              <span className="font-medium text-moss-700">
                 ✓ {item.purchasedBy ? PURCHASED_LABEL[item.purchasedBy] : "Comprado"}
               </span>
             )}

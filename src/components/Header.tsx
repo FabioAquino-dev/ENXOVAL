@@ -35,7 +35,7 @@ export default function Header({
         </div>
         <div className="flex items-center gap-2">
           <span
-            className={`h-2 w-2 rounded-full ${synced ? "bg-emerald-500" : "bg-amber-500"}`}
+            className={`h-2 w-2 rounded-full ${synced ? "bg-moss-600" : "bg-amber-500"}`}
             title={synced ? "Sincronizado" : "Sem sincronização"}
           />
           {role !== "convidado" && (

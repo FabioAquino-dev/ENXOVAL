@@ -50,7 +50,7 @@ export default function CategorySection({
         <span className="flex items-center gap-2 text-sm font-bold text-moss-950">
           <span>{icon}</span>
           {category}
-          {done && <span className="text-emerald-600">✓</span>}
+          {done && <span className="text-moss-700">✓</span>}
         </span>
         <span className="flex items-center gap-2 text-xs text-brown-600">
           {obtainedItems}/{totalItems}

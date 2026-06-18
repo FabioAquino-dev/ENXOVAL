@@ -26,6 +26,7 @@ export default function Home() {
     updateSettings,
     markGifted,
     undoGift,
+    resetQuantitiesToDefault,
   } = useEnxoval(role);
 
   const [search, setSearch] = useState("");
@@ -78,7 +79,7 @@ export default function Home() {
 
       {thanksMessage && (
         <div className="px-4 pb-2">
-          <div className="rounded-xl bg-emerald-500 px-4 py-3 text-center text-sm font-semibold text-white shadow-md">
+          <div className="rounded-xl bg-moss-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-md">
             {thanksMessage}
           </div>
         </div>
@@ -141,6 +142,7 @@ export default function Home() {
             setShowSettings(false);
             clearAccess();
           }}
+          onResetQuantities={resetQuantitiesToDefault}
         />
       )}
     </div>

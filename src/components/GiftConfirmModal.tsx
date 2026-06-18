@@ -37,7 +37,7 @@ export default function GiftConfirmModal({
         </label>
         <button
           onClick={() => onConfirm(name)}
-          className="rounded-xl bg-emerald-500 px-4 py-3.5 text-base font-semibold text-white active:scale-[0.98]"
+          className="rounded-xl bg-moss-600 px-4 py-3.5 text-base font-semibold text-white transition hover:bg-moss-700 active:scale-[0.98]"
         >
           🎁 Confirmar presente
         </button>

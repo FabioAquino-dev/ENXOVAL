@@ -15,11 +15,11 @@ export default function Dashboard({
     const gifted = items.filter((it) => it.gifted).length;
     return (
       <div className="px-4 py-3">
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-center">
-          <p className="text-base font-bold text-emerald-900">
+        <div className="rounded-xl border border-moss-200 bg-moss-50/70 p-4 text-center">
+          <p className="text-base font-bold text-moss-900">
             🎁 Escolha um presente para o Timóteo
           </p>
-          <p className="mt-1 text-xs text-emerald-700">
+          <p className="mt-1 text-xs text-moss-700">
             {pending} {pending === 1 ? "item disponível" : "itens disponíveis"}
             {gifted > 0 && ` · ${gifted} já presenteado${gifted === 1 ? "" : "s"}`}
           </p>
@@ -55,12 +55,12 @@ export default function Dashboard({
       </Card>
       <Card label="Estimado (mercado)" value={formatBRL(estimated)} sub="total sugerido" />
       <Card label="Gasto real" value={formatBRL(real)} sub="já comprado" />
-      <Card label="Presenteado" value={formatBRL(giftedValue)} sub="recebido de presente" accent="text-emerald-600" />
+      <Card label="Presenteado" value={formatBRL(giftedValue)} sub="recebido de presente" accent="text-moss-700" />
       <Card
         label="Diferença"
         value={formatBRL(Math.abs(diff))}
         sub={diff <= 0 ? "abaixo do estimado" : "acima do estimado"}
-        accent={diff <= 0 ? "text-emerald-600" : "text-red-600"}
+        accent={diff <= 0 ? "text-moss-700" : "text-red-600"}
       />
     </div>
   );
