@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Category, LayetteItem, Person, estimatedTotal, totalQty } from "@/lib/types";
@@ -44,7 +44,7 @@ export default function CategorySection({
           {category}
           {done && <span className="text-emerald-600">✓</span>}
         </span>
-        <span className="flex items-center gap-2 text-xs text-blue-700/70">
+        <span className="flex items-center gap-2 text-xs text-blue-800/90">
           {purchasedItems}/{totalItems} · {formatBRL(subtotal)}
           <span className={`transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
         </span>

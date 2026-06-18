@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Person } from "@/lib/types";
 import { countdown } from "@/lib/format";
@@ -25,7 +25,7 @@ export default function Header({
           <h1 className="text-base font-bold text-blue-950">
             Enxoval{babyName ? ` do ${babyName}` : " do nosso menino"} 👶
           </h1>
-          <p className="text-xs text-blue-700/70">
+          <p className="text-xs text-blue-800/90">
             {cd.isPast
               ? "O bebê já pode ter chegado! 🎉"
               : `Faltam ~${cd.weeks} semanas (${cd.days} dias) para a data prevista`}
@@ -46,7 +46,7 @@ export default function Header({
         </div>
       </div>
       {person && (
-        <div className="mt-1 text-[11px] text-blue-700/60">
+        <div className="mt-1 text-[11px] text-blue-700/80">
           Você é {person === "papai" ? "👨 Papai" : "👩 Mamãe"}
         </div>
       )}

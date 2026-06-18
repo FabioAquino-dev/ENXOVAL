@@ -53,9 +53,9 @@ function Card({
 }) {
   return (
     <div className="rounded-xl border border-blue-100 bg-white p-3 shadow-sm">
-      <div className="text-xs font-medium text-blue-700/70">{label}</div>
+      <div className="text-xs font-medium text-blue-800/90">{label}</div>
       <div className={`text-xl font-bold text-blue-950 ${accent ?? ""}`}>{value}</div>
-      {sub && <div className="text-[11px] text-blue-700/60">{sub}</div>}
+      {sub && <div className="text-[11px] text-blue-700/80">{sub}</div>}
       {children}
     </div>
   );

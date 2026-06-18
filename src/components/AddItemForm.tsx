@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { CATEGORIES, Category, LayetteItem } from "@/lib/types";
@@ -106,7 +106,7 @@ export default function AddItemForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-blue-700/70">
+      <span className="mb-1 block text-xs font-medium text-blue-800/90">
         {label}
       </span>
       {children}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Person } from "@/lib/types";
 
@@ -14,7 +14,7 @@ export default function PersonGate({
         <h1 className="mb-1 text-lg font-bold text-blue-950">
           Enxoval do nosso menino
         </h1>
-        <p className="mb-6 text-sm text-blue-700/70">
+        <p className="mb-6 text-sm text-blue-800/90">
           Quem é você? Isso ajuda a saber quem marcou ou comprou cada item.
         </p>
         <div className="flex flex-col gap-3">

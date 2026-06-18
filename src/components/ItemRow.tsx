@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { LayetteItem, Person, SIZES, estimatedTotal, totalQty } from "@/lib/types";
@@ -46,14 +46,14 @@ export default function ItemRow({
             </p>
             <button
               onClick={onDelete}
-              className="shrink-0 text-xs text-blue-300 hover:text-red-500"
+              className="shrink-0 text-xs text-blue-400 hover:text-red-500"
               aria-label="Remover item"
             >
               ✕
             </button>
           </div>
           {item.detail && (
-            <p className="text-xs text-blue-700/60">{item.detail}</p>
+            <p className="text-xs text-blue-700/80">{item.detail}</p>
           )}
 
           {item.sizes ? (
@@ -106,7 +106,7 @@ export default function ItemRow({
             />
           </div>
 
-          <div className="mt-1 flex items-center justify-between text-[11px] text-blue-700/60">
+          <div className="mt-1 flex items-center justify-between text-[11px] text-blue-700/80">
             <span>
               {qty}× · subtotal {formatBRL(estimatedTotal(item))}
             </span>
@@ -131,7 +131,7 @@ export default function ItemRow({
           ) : (
             <button
               onClick={() => setNotesOpen(true)}
-              className="mt-1 text-[11px] text-blue-400 hover:text-blue-600"
+              className="mt-1 text-[11px] text-blue-500 hover:text-blue-600"
             >
               + observação
             </button>
@@ -155,11 +155,11 @@ function PriceField({
 }) {
   return (
     <label className="block">
-      <span className="text-[10px] uppercase tracking-wide text-blue-400">
+      <span className="text-[10px] uppercase tracking-wide text-blue-500">
         {label}
       </span>
       <div className="flex items-center rounded border border-blue-200 bg-white px-1.5">
-        <span className="text-xs text-blue-400">R$</span>
+        <span className="text-xs text-blue-500">R$</span>
         <input
           type="number"
           min={0}

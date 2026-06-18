@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+/*
+ * This app always uses the light blue palette, regardless of the
+ * device's system theme. Letting the iPhone's dark mode bleed in here
+ * (via prefers-color-scheme) made the body flip to near-black while
+ * the cards stayed light, which is the broken look users were seeing.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eff6ff;
+  --foreground: #172554;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,11 +19,8 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {

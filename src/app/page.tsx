@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { useEnxoval } from "@/lib/useEnxoval";
@@ -67,11 +67,11 @@ export default function Home() {
       />
 
       {loading ? (
-        <p className="px-4 py-8 text-center text-sm text-blue-700/60">
+        <p className="px-4 py-8 text-center text-sm text-blue-700/80">
           Carregando enxoval...
         </p>
       ) : filtered.length === 0 ? (
-        <p className="px-4 py-8 text-center text-sm text-blue-700/60">
+        <p className="px-4 py-8 text-center text-sm text-blue-700/80">
           Nenhum item encontrado.
         </p>
       ) : (

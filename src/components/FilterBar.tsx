@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CATEGORIES, CATEGORY_ICON, Category } from "@/lib/types";
 
@@ -40,7 +40,7 @@ export default function FilterBar({
           />
         ))}
       </div>
-      <label className="mt-1 flex items-center gap-2 text-xs text-blue-700/70">
+      <label className="mt-1 flex items-center gap-2 text-xs text-blue-800/90">
         <input
           type="checkbox"
           checked={hidePurchased}
